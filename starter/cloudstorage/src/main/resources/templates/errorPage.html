@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body>
+<h1>Oops! 😳 This page does not exist! Try again later 👻</h1>
+<div class="form-group" th:if="${home}">
+    <label><a th:href="@{/home}">Go back to home page.</a></label>
+</div>
+<div class="form-group" th:if="${login}">
+    <label><a th:href="@{/login}">Go back to login page.</a></label>
+</div>
+</body>
+</html>
