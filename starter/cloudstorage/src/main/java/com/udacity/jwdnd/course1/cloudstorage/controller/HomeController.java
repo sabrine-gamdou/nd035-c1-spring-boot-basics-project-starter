@@ -38,9 +38,7 @@ public class HomeController {
         model.addAttribute("credentials", credentialService.getCredentials(user));
         model.addAttribute("files", fileService.getFiles(user));
         model.addAttribute("encryptionService",encryptionService);
-        //Error attributes
 
-       // model.addAttribute("",);
         return "home";
     }
 
