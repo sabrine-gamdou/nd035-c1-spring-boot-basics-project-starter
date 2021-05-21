@@ -33,26 +33,6 @@ public class SignupPage {
         signup.click();
     }
 
-    public void login(){
-        login.click();
-    }
-
-    public String getDisplayedFirstname(){
-        return firstname.getAttribute("value");
-    }
-
-    public String getDisplayedLastname(){
-        return lastname.getAttribute("value");
-    }
-
-    public String getDisplayedUsername(){
-        return username.getAttribute("value");
-    }
-
-    public String getDisplayedPassword(){
-        return password.getAttribute("value");
-    }
-
     private void enterFirstname(String firstname){
         this.firstname.clear();
         this.firstname.sendKeys(firstname);
