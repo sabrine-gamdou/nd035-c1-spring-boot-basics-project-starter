@@ -16,32 +16,39 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
 	private int port;
 
-	public String baseURL;
+	private String baseURL;
 
-	private WebDriver driver;
+	private static WebDriver driver;
+
+	/*Test User Data*/
+	private String firstname = "mango";
+	private String lastname = "kawazaki";
+	private String username = "admin";
+	private String password = "admin";
 
 	@BeforeAll
-	static void beforeAll() {
+	public static void beforeAll() {
 		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver();
+	}
+
+	@AfterAll
+	public static void afterAll() {
+		if (driver != null) {
+			driver.quit();
+			driver = null;
+		}
 	}
 
 	@BeforeEach
 	public void beforeEach() {
 		baseURL = "http://localhost:" + port;
-		this.driver = new ChromeDriver();
-	}
-
-	@AfterEach
-	public void afterEach() {
-		if (this.driver != null) {
-			driver.quit();
-			this.driver = null;
-		}
 	}
 
 	@Test
@@ -56,41 +63,25 @@ class CloudStorageApplicationTests {
 		assertEquals("Signup", driver.getTitle());
 	}
 
-	/*
-	* A test that signs up a new user, logs in, verifies that the home page is accessible,
-	* logs out, and verifies that the home page is no longer accessible.
-	* */
-	@Test
-	public void testUserSignupLoginAndHomeAccess(){
-		/*Test User Data*/
-		String firstname = "mango";
-		String lastname = "kawazaki";
-		String username = "admin";
-		String password = "admin";
-
+	public void signup(){
 		/* Signup */
 		driver.get(baseURL + "/signup");
 		SignupPage signupPage = new SignupPage(driver);
 		signupPage.signupUser(firstname,lastname,username,password);
+	}
 
+	public void login(){
 		/* Login */
 		driver.get(baseURL + "/login");
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.loginUser(username,password);
-		assertEquals("Home", driver.getTitle());
-
-		/* Logout */
-		HomePage homePage = new HomePage(driver);
-		homePage.logout();
-		assertNotEquals("Home", driver.getTitle());
-		assertEquals("Login", driver.getTitle());
-
 	}
 
 	/*
-	* a test that verifies that an unauthorized user can only access the login and signup pages
+	* A test that verifies that an unauthorized user can only access the login and signup pages
 	* */
 	@Test
+	@Order(1)
 	public void testUnauthorizedUserAccess(){
 		driver.get(baseURL+"/home");
 		assertEquals("Login",driver.getTitle());
@@ -107,5 +98,52 @@ class CloudStorageApplicationTests {
 		driver.get(baseURL+"/notes");
 		assertEquals("Login",driver.getTitle());
 	}
+
+	/*
+	 * A test that signs up a new user, logs in, verifies that the home page is accessible,
+	 * logs out, and verifies that the home page is no longer accessible.
+	 * */
+	@Test
+	@Order(2)
+	public void testUserSignupLoginAndHomeAccess(){
+		signup();
+		login();
+		assertEquals("Home", driver.getTitle());
+	}
+
+	@Test
+	@Order(3)
+	public void testAccessAfterLogout(){
+		HomePage homePage = new HomePage(driver);
+		assertEquals("Home", driver.getTitle()); //make sure home is accessible at this point
+
+		/* Logout */
+		homePage.logout();
+		assertNotEquals("Home", driver.getTitle());
+		assertEquals("Login", driver.getTitle());
+	}
+
+
+	/*
+	* Notes
+	* */
+	/*
+	*  A test that creates a note, and verifies it is displayed
+	* */
+	@Test
+	@Order(4)
+	public void testCreateNoteAndVerifyDisplayedValues(){
+		String title = "Example Note Title";
+		String description = "Example Note Description";
+
+		login();
+
+		HomePage homePage = new HomePage(driver);
+		homePage.createNote(title,description);
+		assertEquals(title,homePage.getDisplayedNoteTitle());
+		assertEquals(description,homePage.getDisplayedNoteDescription());
+
+	}
+
 
 }
