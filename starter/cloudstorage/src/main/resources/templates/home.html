@@ -95,7 +95,7 @@
                         <div id="error-msg" th:if="${noteError}" class="alert alert-danger">
                             <span th:text="${noteError}"></span>
                         </div>
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                        <button id="add-note-button" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
                         <div class="table-responsive">
@@ -120,8 +120,8 @@
                                             >Edit</button>
                                             <button type="button" class="btn btn-danger" th:note-id="${note.getNoteId()}" onclick="showDeleteNoteModal(this.getAttribute('note-id'))">Delete</button>
                                         </td>
-                                        <th scope="row" th:text="${note.getNoteTitle()}">Example Note Title</th>
-                                        <td th:text="${note.getNoteDescription()}" >Example Note Description</td>
+                                        <th id="displayed-note-title" scope="row" th:text="${note.getNoteTitle()}">Example Note Title</th>
+                                        <td id="displayed-note-description" th:text="${note.getNoteDescription()}" >Example Note Description</td>
                                     <tr>
                                 </tbody>
                             </table>
@@ -208,7 +208,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button id="note-submit" type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
