@@ -340,7 +340,6 @@
                                             <div class="form-group">
                                                 <label for="credential-password" class="col-form-label">Password</label>
                                                 <input class="form-control" name="password" id="credential-password" maxlength="30" required>
-                                               <!-- <input type="checkbox" onClick="showCredentialsPassword("credential-password"))">Show Password -->
                                             </div>
                                             <button id="credentialSubmit" type="submit" class="d-none"></button>
                                         </form>
@@ -400,16 +399,6 @@
                 $('#delete-credential-id').val(credentialId ? credentialId : '');
                 $('#deleteCredentialModal').modal('show');
             }
-
-            function showCredentialsPassword(entry) {
-                var credentialPass = document.getElementById(entry)
-                if (credentialPass.type === "password") {
-                    credentialPass.type = "text";
-                } else {
-                    credentialPass.type = "password";
-                }
-            }
-
 
             function showDeleteFileModal(fileId) {
                 $('#delete-file-id').val(fileId ? fileId : '');
