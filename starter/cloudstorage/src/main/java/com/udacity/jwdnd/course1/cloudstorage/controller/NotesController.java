@@ -69,7 +69,9 @@ public class NotesController {
         this.noteError = null;
         this.noteSuccess = null;
         note.setUserId(userService.getUser(authentication.getName()).getUserId());
-        int rowsUpdated = noteService.deleteNote(note.getNoteId());
+        int noteId = note.getNoteId();
+        System.out.println("This is the ID: " + noteId);
+        int rowsUpdated = noteService.deleteNote(noteId);
         if (rowsUpdated < 0){
             this.noteError = "There was an error deleting a note. Please try again";
         }
