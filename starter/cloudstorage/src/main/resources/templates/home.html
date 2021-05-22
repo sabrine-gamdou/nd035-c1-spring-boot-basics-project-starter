@@ -117,8 +117,8 @@
                                                     onclick="showEditNoteModal(this.getAttribute('note-id'),
                                                     this.getAttribute('note-title'),
                                                     this.getAttribute('note-description'))"
-                                            >Edit</button>
-                                            <button type="button" class="btn btn-danger" th:note-id="${note.getNoteId()}" onclick="showDeleteNoteModal(this.getAttribute('note-id'))">Delete</button>
+                                            id="edit-note-button">Edit</button>
+                                            <button id="delete-note-button" type="button" class="btn btn-danger" th:note-id="${note.getNoteId()}" onclick="showDeleteNoteModal(this.getAttribute('note-id'))">Delete</button>
                                         </td>
                                         <th id="displayed-note-title" scope="row" th:text="${note.getNoteTitle()}">Example Note Title</th>
                                         <td id="displayed-note-description" th:text="${note.getNoteDescription()}" >Example Note Description</td>
@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#deleteNoteSubmit').click();">Delete</button>
+                                        <button id="delete-note-submit" type="button" class="btn btn-primary" onclick="$('#deleteNoteSubmit').click();">Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#editNoteSubmit').click();">Save changes</button>
+                                        <button id="edit-note-submit" type="button" class="btn btn-primary" onclick="$('#editNoteSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
