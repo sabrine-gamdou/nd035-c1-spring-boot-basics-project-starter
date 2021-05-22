@@ -145,5 +145,30 @@ class CloudStorageApplicationTests {
 
 	}
 
+	/*
+	* A test that edits an existing note and verifies that the
+	* */
+	@Test
+	@Order(5)
+	public void testEditExistingNoteAndVerifyDisplayedValues(){
+		String newTitle = "Lights off";
+		String newDescription = "Don't forget to turn the lights off!";
 
+		HomePage homePage = new HomePage(driver);
+		homePage.editNote(newTitle,newDescription);
+		assertEquals(newTitle,homePage.getDisplayedNoteTitle());
+		assertEquals(newDescription,homePage.getDisplayedNoteDescription());
+	}
+
+	/*
+	* A test that deletes a note and verifies that the note is no longer displayed
+	* */
+	@Test
+	@Order(6)
+	public void testDeleteExistingNoteAndVerifyItIsNotDisplayed(){
+		HomePage homePage = new HomePage(driver);
+		homePage.deleteNote();
+		assertNull(homePage.getDisplayedNoteTitle());
+		assertNull(homePage.getDisplayedNoteDescription());
+	}
 }
