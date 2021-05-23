@@ -3,19 +3,15 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.service.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
-import org.apache.coyote.Response;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Files;
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/files")
@@ -25,7 +21,9 @@ public class FilesController {
     private final UserService userService;
 
     public String fileError = null;
+    public String fileErrorMessage = null;
     public String fileSuccess = null;
+    public String fileSuccessMessage = null;
 
     public FilesController(FileService fileService, UserService userService){
         this.fileService = fileService;
@@ -50,49 +48,57 @@ public class FilesController {
     }
 
     @PostMapping("/upload")
-    public String createFile(@RequestParam("fileUpload") MultipartFile multipartFile, Model model,
-                             Authentication authentication){
+    public String createFile(@RequestParam("fileUpload") MultipartFile multipartFile, RedirectAttributes redirectAttributes,
+                             Authentication authentication) {
         this.fileError = null;
+        this.fileErrorMessage = null;
         this.fileSuccess = null;
+        this.fileSuccessMessage = null;
 
         int userId = userService.getUser(authentication.getName()).getUserId();
-        /*if (this.fileService.isFileNameAvailable(multipartFile, userId)) {*/
+        if (this.fileService.isFileNameAvailable(multipartFile, userId) && !multipartFile.isEmpty()) {
             try {
                 fileService.createFile(new File(null, multipartFile.getOriginalFilename(), multipartFile.getContentType(),
-                                        multipartFile.getSize(), userId, multipartFile.getBytes()));
-                model.addAttribute("fileSuccess", "File created successfully!");
-
+                        multipartFile.getSize(), userId, multipartFile.getBytes()));
+                redirectAttributes.addFlashAttribute("fileSuccess", true);
+                redirectAttributes.addFlashAttribute("fileSuccessMessage", "File created successfully!");
                 return "redirect:/home";
 
             } catch (Exception e) {
-                System.out.println("This is the file data: " + multipartFile.getOriginalFilename() + " " + multipartFile.getSize());
-                System.out.println(e.toString());
-                model.addAttribute("fileError", e.toString());
+                redirectAttributes.addFlashAttribute("fileError", true);
+                redirectAttributes.addFlashAttribute("fileErrorMessage", e.toString());
                 return "redirect:/home";
             }
-        /*} else {
-            model.addAttribute("fileError", "File name already used");
-            model.addAttribute("files", fileService.getFiles(userService.getUser(authentication.getName())));
-            return "redirect:/home";*/
-       // }
-
+        } else if (multipartFile.isEmpty()) {
+            redirectAttributes.addFlashAttribute("fileError", true);
+            redirectAttributes.addFlashAttribute("fileErrorMessage", "File should not be empty!");
+            return "redirect:/home";
+        } else {
+            redirectAttributes.addFlashAttribute("fileError", true);
+            redirectAttributes.addFlashAttribute("fileErrorMessage", "File name already used");
+            return "redirect:/home";
+        }
     }
 
     @DeleteMapping
-    public String deleteFile(@ModelAttribute File file, Model model,
+    public String deleteFile(@ModelAttribute File file, RedirectAttributes redirectAttributes,
                              Authentication authentication){
         this.fileError = null;
+        this.fileErrorMessage = null;
         this.fileSuccess = null;
+        this.fileSuccessMessage = null;
 
         file.setUserId(userService.getUser(authentication.getName()).getUserId());
         int rowsAdded = fileService.deleteFile(file.getFileId());
         if( rowsAdded < 0 ){
-            fileError = "There was an error deleting the file, please try again.";
+            fileErrorMessage = "There was an error deleting the file, please try again.";
         }
         if(fileError == null){
-            model.addAttribute("fileSuccess", "File deleted successfully!");
+            redirectAttributes.addFlashAttribute("fileSuccess",true);
+            redirectAttributes.addFlashAttribute("fileSuccessMessage","File deleted successfully!");
         }else{
-            model.addAttribute("fileError", fileError);
+            redirectAttributes.addFlashAttribute("fileError",true);
+            redirectAttributes.addFlashAttribute("fileErrorMessage",this.fileErrorMessage);
         }
 
         return "redirect:/home";
