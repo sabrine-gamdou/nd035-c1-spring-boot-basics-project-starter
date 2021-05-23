@@ -1,11 +1,10 @@
 package com.udacity.jwdnd.course1.cloudstorage.pages;
 
-import com.udacity.jwdnd.course1.cloudstorage.service.utils.WebElementUtilsService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.WebElementUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class NotesPage {
 
@@ -55,50 +54,49 @@ public class NotesPage {
     @FindBy(css = "#delete-note-submit")
     private WebElement deleteNoteSubmit;
 
-    @Autowired
-    private WebElementUtilsService webElementUtilsService;
+    private WebElementUtils webElementUtils;
 
     private final WebDriver driver;
 
     public NotesPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        this.webElementUtilsService = new WebElementUtilsService();
-        this.webElementUtilsService.setDriver(this.driver);
+        this.webElementUtils = new WebElementUtils();
+        this.webElementUtils.setDriver(this.driver);
     }
 
     public void createNote(String title, String description){
-        webElementUtilsService.clickButton(notesTab);
-        webElementUtilsService.clickButton(addNoteButton);
-        webElementUtilsService.enterValue(this.noteTitle,title);
-        webElementUtilsService.enterValue(this.noteDescription,description);
-        webElementUtilsService.clickButton(noteSubmit);
-        webElementUtilsService.clickButton(notesTab);
+        webElementUtils.clickButton(notesTab);
+        webElementUtils.clickButton(addNoteButton);
+        webElementUtils.enterValue(this.noteTitle,title);
+        webElementUtils.enterValue(this.noteDescription,description);
+        webElementUtils.clickButton(noteSubmit);
+        webElementUtils.clickButton(notesTab);
     }
 
     public void editNote(String title, String description){
-        webElementUtilsService.clickButton(notesTab);
-        webElementUtilsService.clickButton(editNoteButton);
-        webElementUtilsService.enterValue(this.editNoteTitle,title);
-        webElementUtilsService.enterValue(this.editNoteDescription,description);
-        webElementUtilsService.clickButton(editNoteSubmit);
-        webElementUtilsService.clickButton(notesTab);
+        webElementUtils.clickButton(notesTab);
+        webElementUtils.clickButton(editNoteButton);
+        webElementUtils.enterValue(this.editNoteTitle,title);
+        webElementUtils.enterValue(this.editNoteDescription,description);
+        webElementUtils.clickButton(editNoteSubmit);
+        webElementUtils.clickButton(notesTab);
     }
 
     public void deleteNote(){
-        webElementUtilsService.clickButton(notesTab);
-        webElementUtilsService.clickButton(deleteNoteButton);
-        webElementUtilsService.clickButton(deleteNoteSubmit);
-        webElementUtilsService.clickButton(notesTab);
+        webElementUtils.clickButton(notesTab);
+        webElementUtils.clickButton(deleteNoteButton);
+        webElementUtils.clickButton(deleteNoteSubmit);
+        webElementUtils.clickButton(notesTab);
     }
 
     public String getDisplayedNoteTitle(){
-        webElementUtilsService.delay(this.displayedNoteTitle);
+        webElementUtils.delay(this.displayedNoteTitle);
         return this.displayedNoteTitle.getText();
     }
 
     public String getDisplayedNoteDescription(){
-        webElementUtilsService.delay(this.displayedNoteDescription);
+        webElementUtils.delay(this.displayedNoteDescription);
         return this.displayedNoteDescription.getText();
     }
 

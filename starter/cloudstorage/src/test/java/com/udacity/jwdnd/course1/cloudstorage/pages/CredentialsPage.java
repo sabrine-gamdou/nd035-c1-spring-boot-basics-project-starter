@@ -1,11 +1,10 @@
 package com.udacity.jwdnd.course1.cloudstorage.pages;
 
-import com.udacity.jwdnd.course1.cloudstorage.service.utils.WebElementUtilsService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.WebElementUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CredentialsPage {
 
@@ -64,64 +63,63 @@ public class CredentialsPage {
     @FindBy(css = "#delete-credential-submit")
     private WebElement deleteCredentialSubmit;
 
-    @Autowired
-    private WebElementUtilsService webElementUtilsService;
+    private WebElementUtils webElementUtils;
 
     private final WebDriver driver;
 
     public CredentialsPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        this.webElementUtilsService = new WebElementUtilsService();
-        this.webElementUtilsService.setDriver(this.driver);
+        this.webElementUtils = new WebElementUtils();
+        this.webElementUtils.setDriver(this.driver);
     }
 
     public void createCredential(String url, String username, String password){
-        webElementUtilsService.clickButton(credentialsTab);
-        webElementUtilsService.clickButton(addCredentialButton);
-        webElementUtilsService.enterValue(this.credentialUrl,url);
-        webElementUtilsService.enterValue(this.credentialUsername,username);
-        webElementUtilsService.enterValue(this.credentialPassword,password);
-        webElementUtilsService.clickButton(credentialSubmit);
-        webElementUtilsService.clickButton(credentialsTab);
+        webElementUtils.clickButton(credentialsTab);
+        webElementUtils.clickButton(addCredentialButton);
+        webElementUtils.enterValue(this.credentialUrl,url);
+        webElementUtils.enterValue(this.credentialUsername,username);
+        webElementUtils.enterValue(this.credentialPassword,password);
+        webElementUtils.clickButton(credentialSubmit);
+        webElementUtils.clickButton(credentialsTab);
     }
 
     public void editCredential(String url, String username, String password){
-        webElementUtilsService.clickButton(credentialsTab);
-        webElementUtilsService.clickButton(editCredentialButton);
-        webElementUtilsService.enterValue(this.editCredentialUrl,url);
-        webElementUtilsService.enterValue(this.editCredentialUsername,username);
-        webElementUtilsService.enterValue(this.editCredentialPassword,password);
-        webElementUtilsService.clickButton(editCredentialSubmit);
-        webElementUtilsService.clickButton(credentialsTab);
+        webElementUtils.clickButton(credentialsTab);
+        webElementUtils.clickButton(editCredentialButton);
+        webElementUtils.enterValue(this.editCredentialUrl,url);
+        webElementUtils.enterValue(this.editCredentialUsername,username);
+        webElementUtils.enterValue(this.editCredentialPassword,password);
+        webElementUtils.clickButton(editCredentialSubmit);
+        webElementUtils.clickButton(credentialsTab);
     }
 
     public void deleteCredential(){
-        webElementUtilsService.clickButton(credentialsTab);
-        webElementUtilsService.clickButton(deleteCredentialButton);
-        webElementUtilsService.clickButton(deleteCredentialSubmit);
-        webElementUtilsService.clickButton(credentialsTab);
+        webElementUtils.clickButton(credentialsTab);
+        webElementUtils.clickButton(deleteCredentialButton);
+        webElementUtils.clickButton(deleteCredentialSubmit);
+        webElementUtils.clickButton(credentialsTab);
     }
 
     public String getDisplayedCredentialUrl(){
-        webElementUtilsService.delay(this.displayedCredentialUrl);
+        webElementUtils.delay(this.displayedCredentialUrl);
         return this.displayedCredentialUrl.getText();
     }
 
     public String getDisplayedCredentialUsername(){
-        webElementUtilsService.delay(this.displayedCredentialUsername);
+        webElementUtils.delay(this.displayedCredentialUsername);
         return this.displayedCredentialUsername.getText();
     }
 
     public String getDisplayedCredentialPassword(){
-        webElementUtilsService.delay(this.displayedCredentialPassword);
+        webElementUtils.delay(this.displayedCredentialPassword);
         return this.displayedCredentialPassword.getText();
     }
 
     public String getDisplayedDecryptedCredentialPassword(){
-        webElementUtilsService.clickButton(credentialsTab);
-        webElementUtilsService.clickButton(editCredentialButton);
-        webElementUtilsService.delay(this.editCredentialPassword);
+        webElementUtils.clickButton(credentialsTab);
+        webElementUtils.clickButton(editCredentialButton);
+        webElementUtils.delay(this.editCredentialPassword);
         return this.editCredentialPassword.getAttribute("value");
     }
 
