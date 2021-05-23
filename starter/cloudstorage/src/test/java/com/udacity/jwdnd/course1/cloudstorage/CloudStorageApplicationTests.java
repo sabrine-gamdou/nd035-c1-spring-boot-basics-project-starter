@@ -1,14 +1,14 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import com.udacity.jwdnd.course1.cloudstorage.pages.HomePage;
-import com.udacity.jwdnd.course1.cloudstorage.pages.LoginPage;
-import com.udacity.jwdnd.course1.cloudstorage.pages.SignupPage;
+import com.udacity.jwdnd.course1.cloudstorage.pages.*;
+import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.service.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -21,6 +21,12 @@ class CloudStorageApplicationTests {
 
 	@LocalServerPort
 	private int port;
+
+	@Autowired
+	private CredentialService credentialService;
+
+	@Autowired
+	private EncryptionService encryptionService;
 
 	private String baseURL;
 
@@ -138,10 +144,10 @@ class CloudStorageApplicationTests {
 
 		login();
 
-		HomePage homePage = new HomePage(driver);
-		homePage.createNote(title,description);
-		assertEquals(title,homePage.getDisplayedNoteTitle());
-		assertEquals(description,homePage.getDisplayedNoteDescription());
+		NotesPage notesPage = new NotesPage(driver);
+		notesPage.createNote(title,description);
+		assertEquals(title,notesPage.getDisplayedNoteTitle());
+		assertEquals(description,notesPage.getDisplayedNoteDescription());
 
 	}
 
@@ -154,10 +160,10 @@ class CloudStorageApplicationTests {
 		String newTitle = "Lights off";
 		String newDescription = "Don't forget to turn the lights off!";
 
-		HomePage homePage = new HomePage(driver);
-		homePage.editNote(newTitle,newDescription);
-		assertEquals(newTitle,homePage.getDisplayedNoteTitle());
-		assertEquals(newDescription,homePage.getDisplayedNoteDescription());
+		NotesPage notesPage = new NotesPage(driver);
+		notesPage.editNote(newTitle,newDescription);
+		assertEquals(newTitle,notesPage.getDisplayedNoteTitle());
+		assertEquals(newDescription,notesPage.getDisplayedNoteDescription());
 	}
 
 	/*
@@ -166,9 +172,81 @@ class CloudStorageApplicationTests {
 	@Test
 	@Order(6)
 	public void testDeleteExistingNoteAndVerifyItIsNotDisplayed(){
-		HomePage homePage = new HomePage(driver);
-		homePage.deleteNote();
-		assertNull(homePage.getDisplayedNoteTitle());
-		assertNull(homePage.getDisplayedNoteDescription());
+		NotesPage notesPage = new NotesPage(driver);
+		notesPage.deleteNote();
+		assertThrows(TimeoutException.class,notesPage::getDisplayedNoteTitle);
+		assertThrows(TimeoutException.class,notesPage::getDisplayedNoteDescription);
 	}
+
+
+	/*
+	* A test that creates a set of credentials,verifies that they
+	* are displayed, and verifies that the displayed
+	* password is encrypted.
+	* */
+	@Test
+	@Order(7)
+	public void testCreatingCredentialAndVerifyCredentialDisplayedAndIfPasswordIsEncrypted(){
+		String url = "https://www.google.com/";
+		String username = "admin";
+		String password = "adminPassword";
+
+		CredentialsPage credentialsPage = new CredentialsPage(driver);
+		credentialsPage.createCredential(url,username,password);
+
+		String encodedKey = credentialService.getCredentialById(1).getKey();
+		String encryptedPassword =  encryptionService.encryptValue(password, encodedKey);
+
+		assertEquals(url,credentialsPage.getDisplayedCredentialUrl());
+		assertEquals(username,credentialsPage.getDisplayedCredentialUsername());
+		assertEquals(encryptedPassword,credentialsPage.getDisplayedCredentialPassword());
+
+	}
+
+
+	/*
+	 * A test that views an existing set of credentials,
+	 * verifies that the viewable password is unencrypted,
+	 * edits the credentials, and verifies that the changes are displayed.
+	 * */
+	@Test
+	@Order(8)
+	public void testVerifyViewablePasswordIsUnencryptedAndEditCredentialAndVerifyChangedAreDisplayed(){
+		String newUrl = "https://stackoverflow.com/";
+		String newUsername = "admin1";
+		String newPassword = "admin2";
+
+		CredentialsPage credentialsPage = new CredentialsPage(driver);
+
+		String encodedKey = credentialService.getCredentialById(1).getKey();
+		String decryptedPassword = encryptionService.decryptValue(credentialsPage.getDisplayedCredentialPassword(),encodedKey);
+
+		assertEquals(decryptedPassword,credentialsPage.getDisplayedDecryptedCredentialPassword());
+		assertNotEquals(credentialsPage.getDisplayedCredentialPassword(),credentialsPage.getDisplayedDecryptedCredentialPassword());
+
+		credentialsPage.editCredential(newUrl,newUsername,newPassword);
+		String encryptedPassword = encryptionService.encryptValue(newPassword,credentialService.getCredentialById(1).getKey());
+
+		assertEquals(newUrl,credentialsPage.getDisplayedCredentialUrl());
+		assertEquals(newUsername,credentialsPage.getDisplayedCredentialUsername());
+		assertEquals(encryptedPassword,credentialsPage.getDisplayedCredentialPassword());
+
+	}
+
+	/*
+	* A test that deletes an existing set of credentials and verifies
+	* that the credentials are no longer displayed.
+	* */
+	@Test
+	@Order(9)
+	public void testDeleteExistingCredentialAndVerifyCredentialsNotDisplayed(){
+		CredentialsPage credentialsPage = new CredentialsPage(driver);
+		credentialsPage.deleteCredential();
+
+		assertThrows(TimeoutException.class,credentialsPage::getDisplayedCredentialUrl);
+		assertThrows(TimeoutException.class,credentialsPage::getDisplayedCredentialUsername);
+		assertThrows(TimeoutException.class,credentialsPage::getDisplayedCredentialPassword);
+	}
+
+
 }
