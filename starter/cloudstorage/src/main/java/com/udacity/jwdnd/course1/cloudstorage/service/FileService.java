@@ -35,9 +35,7 @@ public class FileService {
     }
 
     public boolean isFileNameAvailable(MultipartFile multipartFile, Integer userId) {
-        boolean isFileNameAvailable;
         List <File> files = fileMapper.getFiles(userId);
-        isFileNameAvailable = files.stream().noneMatch(currFile -> currFile.getFilename().equals(multipartFile.getOriginalFilename()));
-        return isFileNameAvailable;
+        return files.stream().noneMatch(currFile -> currFile.getFilename().equals(multipartFile.getOriginalFilename()));
     }
 }

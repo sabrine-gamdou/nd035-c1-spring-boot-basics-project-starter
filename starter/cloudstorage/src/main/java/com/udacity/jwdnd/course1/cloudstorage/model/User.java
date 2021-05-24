@@ -36,10 +36,6 @@ public class User {
         return salt;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -52,15 +48,8 @@ public class User {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
     public String getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
 }

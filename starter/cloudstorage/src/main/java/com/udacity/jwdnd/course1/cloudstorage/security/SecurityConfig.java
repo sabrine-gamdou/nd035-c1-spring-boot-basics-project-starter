@@ -28,9 +28,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/signup", "login","/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated();
-               // .antMatchers("/home/**").authenticated()
-                //.anyRequest().anonymous();
-
 
         http.formLogin()
                 .loginPage("/login")
@@ -44,22 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout");
-      /*  http.authorizeRequests()
-                .antMatchers("/", "/home*", "/result*").authenticated()
-                .antMatchers("/signup", "/login", "/js/**", "/css/**").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/home")
-                .and()
-                .logout()
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .invalidateHttpSession(true)
-                .logoutSuccessUrl("/login?logout");*/
         http.csrf().disable();
 
     }
