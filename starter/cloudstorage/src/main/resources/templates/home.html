@@ -25,7 +25,11 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                        <!--/*@thymesVar id="fileSuccess" type="java.lang.Boolean"*/-->
+                        <!--/*@thymesVar id="fileSuccessMessage" type="java.lang.String"*/-->
                         <div id="file-delete-msg" th:if="${fileSuccess}" th:text="${fileSuccessMessage}" class="alert alert-success" role="alert"/>
+                        <!--/*@thymesVar id="fileError" type="java.lang.Boolean"*/-->
+                        <!--/*@thymesVar id="fileErrorMessage" type="java.lang.String"*/-->
                         <div id="file-error-msg" th:if="${fileError}" th:text="${fileErrorMessage}" class="alert alert-danger" role="alert"/>
                         <form action="#" th:action="@{/files/upload}" enctype="multipart/form-data" th:method="POST">
                             <div class="container">
@@ -89,10 +93,14 @@
                     </div>
 
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+                        <!--/*@thymesVar id="noteSuccess" type="java.lang.Boolean"*/-->
                         <div id="note-success-msg" th:if="${noteSuccess}" class="alert alert-dark" >
+                            <!--/*@thymesVar id="noteSuccessMessage" type="java.lang.String"*/-->
                             <span th:text="${noteSuccessMessage}"></span>
                         </div>
+                        <!--/*@thymesVar id="noteError" type="java.lang.Boolean"*/-->
                         <div id="note-error-msg" th:if="${noteError}" class="alert alert-danger">
+                            <!--/*@thymesVar id="noteErrorMessage" type="java.lang.String"*/-->
                             <span th:text="${noteErrorMessage}"></span>
                         </div>
                         <button id="add-note-button" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
@@ -215,10 +223,14 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
+                        <!--/*@thymesVar id="credentialSuccess" type="java.lang.Boolean"*/-->
                         <div id="credential-success-msg" th:if="${credentialSuccess}" class="alert alert-dark" >
+                            <!--/*@thymesVar id="credentialSuccessMessage" type="java.lang.String"*/-->
                             <span th:text="${credentialSuccessMessage}"></span>
                         </div>
+                        <!--/*@thymesVar id="credentialError" type="java.lang.Boolean"*/-->
                         <div id="credential-error-msg" th:if="${credentialError}" class="alert alert-danger">
+                            <!--/*@thymesVar id="credentialErrorMessage" type="java.lang.String"*/-->
                             <span th:text="${credentialErrorMessage}"></span>
                         </div>
                         <button id="add-credential-button" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
