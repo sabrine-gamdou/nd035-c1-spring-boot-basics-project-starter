@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.service.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessageWriter;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,17 @@ public class NotesController {
     private final NoteService noteService;
     private final UserService userService;
 
-    public String noteError = null;
-    public String noteErrorMessage = null;
-    public String noteSuccess = null;
-    public String noteSuccessMessage = null;
+    private String noteError = null;
+    private String noteErrorMessage = null;
+    private String noteSuccess = null;
+    private String noteSuccessMessage = null;
+
+    private FeedbackMessageWriter feedbackMessageWriter;
 
     public NotesController(NoteService noteService, UserService userService){
         this.noteService = noteService;
         this.userService = userService;
+        feedbackMessageWriter = new FeedbackMessageWriter();
     }
 
     /* It creates a new model object. */
@@ -39,11 +43,11 @@ public class NotesController {
             this.noteErrorMessage = "There was an error creating the note, please try again.";
         }
         if(noteError == null){
-            redirectAttributes.addFlashAttribute("noteSuccess",true);
-            redirectAttributes.addFlashAttribute("noteSuccessMessage", "Note created successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"noteSuccess",
+                    "Note created successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("noteError", true);
-            redirectAttributes.addFlashAttribute("noteErrorMessage",this.noteErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
+                    this.noteErrorMessage);
         }
         return "redirect:/home";
     }
@@ -63,11 +67,11 @@ public class NotesController {
             this.noteErrorMessage = "There was an error for updating a note. Please try again";
         }
         if(noteError == null){
-            redirectAttributes.addFlashAttribute("noteSuccess",true);
-            redirectAttributes.addFlashAttribute("noteSuccessMessage", "Note updated successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"noteSuccess",
+                    "Note updated successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("noteError", true);
-            redirectAttributes.addFlashAttribute("noteErrorMessage",this.noteErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
+                    this.noteErrorMessage);
         }
         return "redirect:/home";
     }
@@ -83,17 +87,16 @@ public class NotesController {
 
         note.setUserId(userService.getUser(authentication.getName()).getUserId());
         int noteId = note.getNoteId();
-        System.out.println("This is the ID: " + noteId);
         int rowsUpdated = noteService.deleteNote(noteId);
         if (rowsUpdated < 0){
             this.noteErrorMessage = "There was an error deleting a note. Please try again";
         }
         if(noteError == null){
-            redirectAttributes.addFlashAttribute("noteSuccess",true);
-            redirectAttributes.addFlashAttribute("noteSuccessMessage", "Note deleted successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes, "noteSuccess",
+                    "Note deleted successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("noteError", true);
-            redirectAttributes.addFlashAttribute("noteErrorMessage",this.noteErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
+                    this.noteErrorMessage);
         }
 
         return "redirect:/home";
