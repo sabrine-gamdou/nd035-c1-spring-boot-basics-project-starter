@@ -26,7 +26,7 @@ public class WebElementUtils {
     }
 
     public void delay(WebElement webElement){
-        new WebDriverWait(driver, 5).until(ExpectedConditions.elementToBeClickable(webElement));
+        new WebDriverWait(driver, 3).until(ExpectedConditions.elementToBeClickable(webElement));
     }
 
 }
