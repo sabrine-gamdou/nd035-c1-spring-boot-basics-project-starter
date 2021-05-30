@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.service.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessageWriter;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,18 @@ public class CredentialsController {
     private final UserService userService;
     private final EncryptionService encryptionService;
 
-    public String credentialError = null;
-    public String credentialErrorMessage = null;
-    public String credentialSuccess = null;
-    public String credentialSuccessMessage = null;
+    private String credentialError = null;
+    private String credentialErrorMessage = null;
+    private String credentialSuccess = null;
+    private String credentialSuccessMessage = null;
+
+    private FeedbackMessageWriter feedbackMessageWriter;
 
     public CredentialsController(CredentialService credentialService, UserService userService, EncryptionService encryptionService){
         this.credentialService = credentialService;
         this.userService = userService;
         this.encryptionService = encryptionService;
+        feedbackMessageWriter = new FeedbackMessageWriter();
     }
 
     @PostMapping
@@ -39,11 +43,11 @@ public class CredentialsController {
             this.credentialErrorMessage = "There was an error creating the credential, please try again.";
         }
         if(credentialError == null){
-            redirectAttributes.addFlashAttribute("credentialSuccess",true);
-            redirectAttributes.addFlashAttribute("credentialSuccessMessage", "Credential created successfully!");
+           feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
+                    "Credential created successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("credentialError", true);
-            redirectAttributes.addFlashAttribute("credentialErrorMessage",this.credentialErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
+                    this.credentialErrorMessage);
         }
 
         return "redirect:/home";
@@ -61,11 +65,11 @@ public class CredentialsController {
             this.credentialErrorMessage = "There was an error updating the credential, please try again.";
         }
         if(credentialError == null){
-            redirectAttributes.addFlashAttribute("credentialSuccess",true);
-            redirectAttributes.addFlashAttribute("credentialSuccessMessage", "Credential updated successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
+                    "Credential updated successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("credentialError", true);
-            redirectAttributes.addFlashAttribute("credentialErrorMessage",this.credentialErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
+                    this.credentialErrorMessage);
         }
         return "redirect:/home";
     }
@@ -85,11 +89,11 @@ public class CredentialsController {
             this.credentialErrorMessage = "There was an error deleting the credential, please try again.";
         }
         if(credentialError == null){
-            redirectAttributes.addFlashAttribute("credentialSuccess",true);
-            redirectAttributes.addFlashAttribute("credentialSuccessMessage", "Credential deleted successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
+                    "Credential deleted successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("credentialError", true);
-            redirectAttributes.addFlashAttribute("credentialErrorMessage",this.credentialErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
+                    this.credentialErrorMessage);
         }
         return "redirect:/home";
     }
@@ -108,7 +112,5 @@ public class CredentialsController {
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), key);
         credential.setPassword(encryptedPassword);
     }
-
-
 
 }
