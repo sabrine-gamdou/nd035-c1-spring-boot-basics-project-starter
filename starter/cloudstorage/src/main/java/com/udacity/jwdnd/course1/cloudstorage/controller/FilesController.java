@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.service.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessageWriter;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,14 +21,17 @@ public class FilesController {
     private final FileService fileService;
     private final UserService userService;
 
-    public String fileError = null;
-    public String fileErrorMessage = null;
-    public String fileSuccess = null;
-    public String fileSuccessMessage = null;
+    private FeedbackMessageWriter feedbackMessageWriter;
+
+    private String fileError = null;
+    private String fileErrorMessage = null;
+    private String fileSuccess = null;
+    private String fileSuccessMessage = null;
 
     public FilesController(FileService fileService, UserService userService){
         this.fileService = fileService;
         this.userService = userService;
+        feedbackMessageWriter = new FeedbackMessageWriter();
     }
 
     @GetMapping("/download/{fileId}")
@@ -38,9 +42,7 @@ public class FilesController {
 
         HttpHeaders header = new HttpHeaders();
         header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename = " + file.getFilename());
-        header.add("Cache-control", "no-cache, no-store, must-revalidate");
-        header.add("Pragma", "no-cache");
-        header.add("Expires", "0");
+
         ByteArrayResource resource = new ByteArrayResource((file.getFileData()));
         return ResponseEntity.ok()
                 .headers(header)
@@ -60,22 +62,22 @@ public class FilesController {
             try {
                 fileService.createFile(new File(null, multipartFile.getOriginalFilename(), multipartFile.getContentType(),
                         multipartFile.getSize(), userId, multipartFile.getBytes()));
-                redirectAttributes.addFlashAttribute("fileSuccess", true);
-                redirectAttributes.addFlashAttribute("fileSuccessMessage", "File created successfully!");
+                feedbackMessageWriter.redirectMessages(redirectAttributes,"fileSuccess",
+                        "File created successfully!");
                 return "redirect:/home";
 
             } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("fileError", true);
-                redirectAttributes.addFlashAttribute("fileErrorMessage", e.toString());
+                feedbackMessageWriter.redirectMessages(redirectAttributes,"fileError",
+                        e.toString());
                 return "redirect:/home";
             }
         } else if (multipartFile.isEmpty()) {
-            redirectAttributes.addFlashAttribute("fileError", true);
-            redirectAttributes.addFlashAttribute("fileErrorMessage", "File should not be empty!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"fileError",
+                    "File should not be empty!");
             return "redirect:/home";
         } else {
-            redirectAttributes.addFlashAttribute("fileError", true);
-            redirectAttributes.addFlashAttribute("fileErrorMessage", "File name already used");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"fileError",
+                    "File name already used");
             return "redirect:/home";
         }
     }
@@ -94,11 +96,11 @@ public class FilesController {
             fileErrorMessage = "There was an error deleting the file, please try again.";
         }
         if(fileError == null){
-            redirectAttributes.addFlashAttribute("fileSuccess",true);
-            redirectAttributes.addFlashAttribute("fileSuccessMessage","File deleted successfully!");
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"fileSuccess",
+                    "File deleted successfully!");
         }else{
-            redirectAttributes.addFlashAttribute("fileError",true);
-            redirectAttributes.addFlashAttribute("fileErrorMessage",this.fileErrorMessage);
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"fileError",
+                    this.fileErrorMessage);
         }
 
         return "redirect:/home";
