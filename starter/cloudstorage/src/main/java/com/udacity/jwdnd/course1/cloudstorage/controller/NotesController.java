@@ -38,11 +38,21 @@ public class NotesController {
         this.noteSuccess = null;
         this.noteSuccessMessage = null;
         note.setUserId(userService.getUser(authentication.getName()).getUserId());
-        int rowsAdded = noteService.createNote(note);
+        int descriptionLength = note.getNoteDescription().length();
+        int rowsAdded = -1;
+        if(note.getNoteDescription().length() > 1000){
+            this.noteErrorMessage = "The description text must have less than 1000 characters!";
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"isLongDescription",this.noteErrorMessage);
+        }else if(!noteService.isNoteAvailable(note.getNoteTitle())){
+            this.noteErrorMessage = "The note title is already used!";
+            feedbackMessageWriter.redirectMessages(redirectAttributes,"isLongDescription",this.noteErrorMessage);
+        }else{
+            rowsAdded = noteService.createNote(note);
+        }
         if( rowsAdded < 0 ){
             this.noteErrorMessage = "There was an error creating the note, please try again.";
         }
-        if(noteError == null){
+        if(noteErrorMessage == null && descriptionLength <= 1000){
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteSuccess",
                     "Note created successfully!");
         }else{
