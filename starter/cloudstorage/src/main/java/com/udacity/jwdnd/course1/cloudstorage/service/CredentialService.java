@@ -44,4 +44,8 @@ public class CredentialService {
         random.nextBytes(key);
         return Base64.getEncoder().encodeToString(key);
     }
+
+    public boolean isCredentialUsernameAvailable(String username){
+        return credentialMapper.getCredentialByUsername(username) == null;
+    }
 }
