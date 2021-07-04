@@ -38,11 +38,16 @@ public class CredentialsController {
 
         getUserAndPassword(credential, authentication);
 
-        int rowsAdded = credentialService.createCredential(credential);
-        if( rowsAdded < 0 ){
+        int rowsAdded = -1;
+        if( !credentialService.isCredentialUsernameAvailable(credential.getUsername())){
+            this.credentialErrorMessage = "The username entered is already used, please use a different one.";
+        }else{
+            rowsAdded = credentialService.createCredential(credential);
+        }
+        if( rowsAdded < 0 && credentialErrorMessage == null){
             this.credentialErrorMessage = "There was an error creating the credential, please try again.";
         }
-        if(credentialError == null){
+        if(credentialErrorMessage == null){
            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
                     "Credential created successfully!");
         }else{
