@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.service.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
 import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessageWriter;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessages;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -40,16 +41,16 @@ public class CredentialsController {
 
         int rowsAdded = -1;
         if( !credentialService.isCredentialUsernameAvailable(credential.getUsername())){
-            this.credentialErrorMessage = "The username entered is already used, please use a different one.";
+            this.credentialErrorMessage = FeedbackMessages.CREDENTIAL_USERNAME_USED;
         }else{
             rowsAdded = credentialService.createCredential(credential);
         }
         if( rowsAdded < 0 && credentialErrorMessage == null){
-            this.credentialErrorMessage = "There was an error creating the credential, please try again.";
+            this.credentialErrorMessage = FeedbackMessages.CREDENTIAL_CREATION_ERROR;
         }
         if(credentialErrorMessage == null){
            feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
-                    "Credential created successfully!");
+                   FeedbackMessages.CREDENTIAL_CREATED_SUCCESSFULLY );
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
                     this.credentialErrorMessage);
@@ -67,11 +68,11 @@ public class CredentialsController {
         int rowsAdded = credentialService.updateCredential(credential);
 
         if( rowsAdded < 0 ){
-            this.credentialErrorMessage = "There was an error updating the credential, please try again.";
+            this.credentialErrorMessage = FeedbackMessages.CREDENTIAL_UPDATE_ERROR;
         }
         if(credentialError == null){
             feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
-                    "Credential updated successfully!");
+                    FeedbackMessages.CREDENTIAL_UPDATED_SUCCESSFULLY);
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
                     this.credentialErrorMessage);
@@ -91,11 +92,11 @@ public class CredentialsController {
         credential.setUserId(userService.getUser(authentication.getName()).getUserId());
         int rowsAdded = credentialService.deleteCredential(credential.getCredentialId());
         if( rowsAdded < 0 ){
-            this.credentialErrorMessage = "There was an error deleting the credential, please try again.";
+            this.credentialErrorMessage = FeedbackMessages.CREDENTIAL_DELETION_ERROR;
         }
         if(credentialError == null){
             feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialSuccess",
-                    "Credential deleted successfully!");
+                    FeedbackMessages.CREDENTIAL_DELETED_SUCCESSFULLY);
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"credentialError",
                     this.credentialErrorMessage);

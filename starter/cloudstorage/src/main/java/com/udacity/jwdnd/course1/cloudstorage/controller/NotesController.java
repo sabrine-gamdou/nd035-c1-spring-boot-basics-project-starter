@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.service.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
 import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessageWriter;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessages;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -41,20 +42,20 @@ public class NotesController {
         int descriptionLength = note.getNoteDescription().length();
         int rowsAdded = -1;
         if(note.getNoteDescription().length() > 1000){
-            this.noteErrorMessage = "The description text must have less than 1000 characters!";
+            this.noteErrorMessage = FeedbackMessages.NOTE_DESCRIPTION_LENGTH_LIMIT_EXCEEDED;
             feedbackMessageWriter.redirectMessages(redirectAttributes,"isLongDescription",this.noteErrorMessage);
         }else if(!noteService.isNoteAvailable(note.getNoteTitle())){
-            this.noteErrorMessage = "The note title is already used!";
+            this.noteErrorMessage = FeedbackMessages.NOTE_TITLE_USED;
             feedbackMessageWriter.redirectMessages(redirectAttributes,"isLongDescription",this.noteErrorMessage);
         }else{
             rowsAdded = noteService.createNote(note);
         }
         if( rowsAdded < 0 ){
-            this.noteErrorMessage = "There was an error creating the note, please try again.";
+            this.noteErrorMessage = FeedbackMessages.NOTE_CREATION_ERROR;
         }
         if(noteErrorMessage == null && descriptionLength <= 1000){
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteSuccess",
-                    "Note created successfully!");
+                    FeedbackMessages.NOTE_CREATED_SUCCESSFULLY);
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
                     this.noteErrorMessage);
@@ -74,11 +75,11 @@ public class NotesController {
         note.setUserId(userService.getUser(authentication.getName()).getUserId());
         int rowsUpdated = noteService.updateNote(note);
         if (rowsUpdated < 0){
-            this.noteErrorMessage = "There was an error for updating a note. Please try again";
+            this.noteErrorMessage = FeedbackMessages.NOTE_UPDATE_ERROR;
         }
         if(noteError == null){
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteSuccess",
-                    "Note updated successfully!");
+                    FeedbackMessages.NOTE_UPDATED_SUCCESSFULLY);
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
                     this.noteErrorMessage);
@@ -99,11 +100,11 @@ public class NotesController {
         int noteId = note.getNoteId();
         int rowsUpdated = noteService.deleteNote(noteId);
         if (rowsUpdated < 0){
-            this.noteErrorMessage = "There was an error deleting a note. Please try again";
+            this.noteErrorMessage = FeedbackMessages.NOTE_DELETION_ERROR;
         }
         if(noteError == null){
             feedbackMessageWriter.redirectMessages(redirectAttributes, "noteSuccess",
-                    "Note deleted successfully!");
+                    FeedbackMessages.NOTE_DELETED_SUCCESSFULLY);
         }else{
             feedbackMessageWriter.redirectMessages(redirectAttributes,"noteError",
                     this.noteErrorMessage);

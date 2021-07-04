@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.utils.FeedbackMessages;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,18 +31,18 @@ public class SignupController {
         String signUpError = null;
         String signupSuccessMessage = null;
         if(!userService.isUsernameAvailable(user.getUsername())){
-            signUpError = "The username already exists.";
+            signUpError = FeedbackMessages.USERNAME_USED;
         }
         if(signUpError == null){
             int rowsAdded = userService.createUser(user);
             if (rowsAdded < 0) {
-                signUpError = "There was an error signing you up, please try again.";
+                signUpError = FeedbackMessages.USER_SIGNUP_ERROR;
             }
         }
 
         if (signUpError == null){
             redirectAttributes.addFlashAttribute("signupSuccess", true);
-            redirectAttributes.addFlashAttribute("signupSuccessMessage", "You successfully signed up!");
+            redirectAttributes.addFlashAttribute("signupSuccessMessage", FeedbackMessages.USER_SIGNED_UP_SUCCESSFULLY);
             return "redirect:/login";
         }else{
             model.addAttribute("signupError", signUpError);
