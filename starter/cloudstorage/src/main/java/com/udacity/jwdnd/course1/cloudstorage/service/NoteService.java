@@ -31,4 +31,8 @@ public class NoteService {
     public int deleteNote(int noteId){
         return noteMapper.delete(noteId);
     }
+
+    public boolean isNoteAvailable(String noteTitle){
+        return noteMapper.getNote(noteTitle) == null;
+    }
 }
